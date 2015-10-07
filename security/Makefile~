@@ -33,7 +33,3 @@ obj-$(CONFIG_INTEGRITY)			+= integrity/built-in.o
 ifeq ($(TIMA_ENABLED),1)
 obj-y     += tima_uevent/
 endif
-
-# Knox SDP
-obj-$(CONFIG_SDP) += sdp/
-obj-$(CONFIG_SDP) += sdp/built-in.o

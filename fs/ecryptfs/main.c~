@@ -499,34 +499,6 @@ static int ecryptfs_parse_options(struct ecryptfs_sb_info *sbi, char *options,
 			strncpy(cipher_mode, ECRYPTFS_AES_CBC_MODE, ECRYPTFS_MAX_CIPHER_MODE_SIZE);
 			break;
 #endif
-#ifdef CONFIG_SDP
-		case ecryptfs_opt_userid: {
-			char *userid_src = args[0].from;
-			int userid =
-				(int)simple_strtol(userid_src,
-						&userid_src, 0);
-			sbi->userid = userid;
-			mount_crypt_stat->userid = userid;
-			/*
-			 * Enabling SDP by default for Knox container.
-			 */
-			mount_crypt_stat->flags |= ECRYPTFS_MOUNT_SDP_ENABLED;
-			}
-			break;
-		case ecryptfs_opt_sdp:
-			mount_crypt_stat->flags |= ECRYPTFS_MOUNT_SDP_ENABLED;
-			break;
-		case ecryptfs_opt_chamber_dirs: {
-			char *chamber_dirs = args[0].from;
-			char *token = NULL;
-
-			printk("%s : chamber dirs : %s\n", __func__, chamber_dirs);
-			while ((token = strsep(&chamber_dirs, "|")) != NULL)
-				if(!is_chamber_directory(mount_crypt_stat, token))
-					add_chamber_directory(mount_crypt_stat, token);
-		}
-		break;
-#endif
 		case ecryptfs_opt_err:
 		default:
 			printk(KERN_WARNING
@@ -688,10 +660,6 @@ static struct dentry *ecryptfs_mount(struct file_system_type *fs_type, int flags
 		rc = -ENOMEM;
 		goto out;
 	}
-
-#ifdef CONFIG_SDP
-	sbi->userid = -1;
-#endif
 
 	rc = ecryptfs_parse_options(sbi, raw_data, &check_ruid);
 	if (rc) {

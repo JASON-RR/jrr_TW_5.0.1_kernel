@@ -167,14 +167,6 @@ static int ecryptfs_show_options(struct seq_file *m, struct dentry *root)
 		else
 			seq_printf(m, ",ecryptfs_sig=%s", walker->sig);
 	}
-#ifdef CONFIG_SDP
-	if(ecryptfs_is_valid_userid(mount_crypt_stat->userid)){
-		seq_printf(m, ",userid=%d", mount_crypt_stat->userid);
-	}
-	if (mount_crypt_stat->flags & ECRYPTFS_MOUNT_SDP_ENABLED){
-		seq_printf(m, ",sdp_enabled");
-	}
-#endif
 	mutex_unlock(&mount_crypt_stat->global_auth_tok_list_mutex);
 
 	seq_printf(m, ",ecryptfs_cipher=%s",

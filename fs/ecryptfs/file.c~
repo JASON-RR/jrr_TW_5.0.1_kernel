@@ -525,15 +525,6 @@ ecryptfs_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		return 0;
 	}
 #endif
-
-#ifdef CONFIG_SDP
-	rc = ecryptfs_do_sdp_ioctl(file, cmd, arg);
-	if (rc == 0) {
-		return rc;
-	}
-#else
-	printk("%s CONFIG_SDP not enabled \n", __func__);
-#endif
 	if (ecryptfs_file_to_private(file))
 		lower_file = ecryptfs_file_to_lower(file);
 	if (lower_file && lower_file->f_op && lower_file->f_op->unlocked_ioctl)

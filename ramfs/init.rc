@@ -14,7 +14,6 @@ import /init.carrier.rc
 on early-init
     # Set init and its forked children's oom_adj.
     write /proc/1/oom_score_adj -1000
-    write /proc/1/oom_adj -16
 
     # Apply strict SELinux checking of PROT_EXEC on mmap/mprotect calls.
     write /sys/fs/selinux/checkreqprot 0
@@ -84,7 +83,7 @@ on init
 
     # See storage config details at http://source.android.com/tech/storage/
     mkdir /mnt/shell 0750 shell shell
-    mkdir /mnt/media_rw 0700 media_rw media_rw
+    mkdir /mnt/media_rw 0751 media_rw media_rw
     mkdir /storage 0751 root sdcard_r
 
     # Directory for putting things only root should see.
@@ -252,7 +251,7 @@ on post-fs
 
     # We chown/chmod /cache again so because mount is run as root + defaults
     chown system cache /cache
-    chmod 0771 /cache
+    chmod 0770 /cache
 
     # This may have been created by the recovery system with odd permissions
     chown system cache /cache/recovery
@@ -473,9 +472,9 @@ on boot
     write /proc/sys/vm/overcommit_memory 1
     write /proc/sys/vm/min_free_order_shift 4
     chown root system /sys/module/lowmemorykiller/parameters/adj
-    chmod 0664 /sys/module/lowmemorykiller/parameters/adj
+    chmod 0220 /sys/module/lowmemorykiller/parameters/adj
     chown root system /sys/module/lowmemorykiller/parameters/minfree
-    chmod 0664 /sys/module/lowmemorykiller/parameters/minfree
+    chmod 0220 /sys/module/lowmemorykiller/parameters/minfree
 
     # Tweak background writeout
     write /proc/sys/vm/dirty_expire_centisecs 200
@@ -521,12 +520,8 @@ on boot
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
 
     # Assume SMP uses shared cpufreq policy for all CPUs
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 	
 # Permission for Touchscreen, Touchkey.
     chown radio system /sys/class/sec/sec_touchkey/touch_sensitivity
@@ -735,8 +730,6 @@ on nonencrypted
     class_start late_start
 
 on charger
-    #disable zen decision
-    write /sys/kernel/zen_decision/enabled 0
     mount ext4 /dev/block/platform/msm_sdcc.1/by-name/system /system wait ro
     copy /system/etc/battery_charging_temp.data /sys/class/power_supply/battery/batt_temp_table
     chmod 0664 /sys/class/power_supply/battery/batt_temp_table
@@ -986,10 +979,10 @@ service DR-daemon /system/bin/ddexe
     user root
     group system radio inet net_raw
 
-#service SMD-daemon /system/bin/smdexe
-#    class main
-#    user root
-#    group system radio inet net_raw
+service SMD-daemon /system/bin/smdexe
+    class main
+    user root
+    group system radio inet net_raw
 
 service BCS-daemon /system/bin/connfwexe
     class main

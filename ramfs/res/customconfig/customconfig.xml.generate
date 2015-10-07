@@ -10,6 +10,11 @@ cat << ENDCONFIG
 	      
       <seekBar description="Sets the sched_mc value which changes the cpu scheduler behaviour for multi-cpu systems. 0 is kernel's default value which turns sched_mc off. Setting it to 1 means that the first core will be tried to be loaded more and setting it to 2 will bias task wake-ups to semi-idle cpu package for power savings. (default: 0)"
             name="sched_mc" action="generic /sys/devices/system/cpu/sched_mc_power_savings" unit="" min="0" reversed="false" step="1" max="2"/>
+            
+       <spinner description="Hotplug mechanism. Default: MPDecision" name="Hotplug mechanism" action="hotplug /tmp/hotplug">
+             <spinnerItem name="MPDecision" value="0"/> 
+             <spinnerItem name="Intelli-Plug" value="1"/> 
+       </spinner>
        
 		<spinner description="This will set the CPU governor. Default CPU governor will only be set during early stages of booting (before init.d execution), and can be overridden by any other scripts or applications." 
 		  name="Default CPU Governor" 
@@ -35,8 +40,6 @@ cat << ENDCONFIG
 			<spinnerItem name="Optimax" value="optimax"/>
 			<spinnerItem name="Preservative" value="preservative"/>
 			<spinnerItem name="SmartassH3" value="smartassH3"/>
-			<spinnerItem name="Barry_Allen" value="barry_allen"/>
-			<spinnerItem name="ArterActive" value="arteractive"/>
        </spinner>
        
       <spinner description="Set the maximum frequency the CPU scales up to. Default: 1890 MHz." 
@@ -98,74 +101,6 @@ cat << ENDCONFIG
 		<seekBar description="Voltage for 486 MHz. (Default: 900000)" name="Voltage 486 MHz" action="cpu-voltage 14" unit="µV" min="750000" reversed="false" step="12500" max="1000000"/>
 		<seekBar description="Voltage for 384 MHz. (Default: 900000)" name="Voltage 384 MHz" action="cpu-voltage 15" unit="µV" min="750000" reversed="false" step="12500" max="1000000"/>
 
-	</settingsPane>
-  </settingsTab>
-  
-  <settingsTab name="Hotplug">
-  	<settingsPane name="Hotplug mechanism"
-		description="Hotplug mechanism">
-		
-			<spinner description="Hotplug mechanism. Default: MPDecision" name="Hotplug mechanism" action="hotplug /tmp/hotplug">
-             			<spinnerItem name="MPDecision" value="0"/> 
-             			<spinnerItem name="IntelliPlug" value="1"/> 
-       			</spinner>
-	</settingsPane>
-	
-	<settingsPane name="IntelliPlug"
-		description="IntelliPlug settings">
-		
-			<spinner description="IntelliPlug Profile. Default: Balanced" name="Profile" action="generic /sys/module/intelli_plug/parameters/nr_run_profile_sel">
-             			<spinnerItem name="Balanced" value="0"/> 
-             			<spinnerItem name="Performance" value="1"/> 
-				<spinnerItem name="Conservative" value="2"/>
-				<spinnerItem name="Eco Performance" value="3"/>
-				<spinnerItem name="Eco Conservative" value="4"/>
-       			</spinner>
-			
-			<spinner description="This will boost your minimun CPU speed if you touch the screen or press a button. Default: Enabled" name="Touch Boost" action="generic /sys/module/intelli_plug/parameters/touch_boost_active">
-             			<spinnerItem name="Disabled" value="0"/> 
-             			<spinnerItem name="Enabled" value="1"/> 
-       			</spinner>
-			
-			<seekBar description="The lower it is, the faster response. Default: 8" name="Hysteresis" action="generic /sys/module/intelli_plug/parameters/nr_run_hysteresis" unit="" min="0" reversed="false" step="1" max="16"/>
-			
-			<spinner description="Set the maximum frequency the CPU scales up to when the screen is off. Default: Disabled" 
-          			name="CPU Max Screen Off Freq" 
-				action="generic /sys/module/intelli_plug/parameters/screen_off_max">
-					<spinnerItem name="Disabled" value="4294967295"/>
-             				<spinnerItem name="384000" value="384000"/> 
-             				<spinnerItem name="486000" value="486000"/> 
-             				<spinnerItem name="594000" value="594000"/> 
-            				<spinnerItem name="702000" value="702000"/> 
-             				<spinnerItem name="810000" value="810000"/> 
-             				<spinnerItem name="918000" value="918000"/> 
-             				<spinnerItem name="1026000" value="1026000"/> 
-             				<spinnerItem name="1134000" value="1134000"/> 
-            				<spinnerItem name="1242000" value="1242000"/> 
-             				<spinnerItem name="1350000" value="1350000"/> 
-             				<spinnerItem name="1458000" value="1458000"/> 
-             				<spinnerItem name="1566000" value="1566000"/> 
-             				<spinnerItem name="1674000" value="1674000"/> 
-             				<spinnerItem name="1782000" value="1782000"/> 
-             				<spinnerItem name="1890000" value="1890000"/> 
-      			</spinner>
-		
-	</settingsPane>
-			
-	<settingsPane name="Hotplug ZenDecision"
-		description="Hotplug ZenDecision">
-			
-			 <spinner description="ZenDecision is a handler to account for behavior caused by disabling some of these services. Default: Enabled"
-               			name="ZenDecision" 
-               			action="generic /sys/kernel/zen_decision/enabled">
-             			<spinnerItem name="Disabled" value="0"/> 
-             			<spinnerItem name="Enabled" value="1"/> 
-       			</spinner>
-			
-			<seekBar description="How long to wait before executing CPU_UP work. Default: 1000ms" name="Wake Wait Time" action="generic /sys/kernel/zen_decision/wake_wait_time" unit="ms" min="0" reversed="false" step="1000" max="60000"/>
-			
-			<seekBar description="Don't do any CPU_UP work up to this battery charge level. Default: 15" name="Bat Threshold Ignore" action="generic /sys/kernel/zen_decision/bat_threshold_ignore" unit="" min="0" reversed="false" step="1" max="100"/>
-			
 	</settingsPane>
   </settingsTab>
 
@@ -246,7 +181,7 @@ cat << ENDCONFIG
              <spinnerItem name="Custom Values" value="2"/> 
        </spinner>
 	   
-       <spinner description="Use MTP during fast charge" 
+	   <spinner description="Use MTP during fast charge" 
                name="Use MTP during fast charge" 
                action="generic /sys/kernel/fast_charge/use_mtp_during_fast_charge">"
              <spinnerItem name="Disabled" value="0"/> 

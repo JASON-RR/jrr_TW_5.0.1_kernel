@@ -285,14 +285,6 @@ on post-fs-data
 
     setprop vold.post_fs_data_done 1
 
-#GPU
-#unify sysfs node for GPU
-   chmod 0444 /sys/devices/platform/gpusysfs/gpu_clock
-   chmod 0644 /sys/devices/platform/gpusysfs/gpu_governor
-   chmod 0644 /sys/devices/platform/gpusysfs/fps
-   chown system shell /sys/devices/platform/gpusysfs/gpu_governor
-   chown system shell /sys/devices/platform/gpusysfs/fps
-
 # Export GPIO56 for fusion targets to enable/disable hub
 service usbhub_init /system/bin/usbhub_init
    class late_start
@@ -615,7 +607,7 @@ service qcom-sh /system/bin/sh /init.qcom.sh
     user root
     oneshot
 
-service qcom-post-boot /system/xbin/busybox sh /sbin/imperium.sh
+service qcom-post-boot /system/xbin/busybox sh /sbin/imperium_post_boot.sh
     class late_start
     user root
     disabled
@@ -637,11 +629,11 @@ service wifi-crda /system/bin/sh /system/etc/init.crda.sh
 on property:sys.boot_completed=1
     start qcom-post-boot
 
-#service atfwd /system/bin/ATFWD-daemon
-#    class late_start
-#    user system
-#    group system radio
-#    onrestart /system/bin/log -t RIL-ATFWD -p w "ATFWD daemon restarted"
+service atfwd /system/bin/ATFWD-daemon
+    class late_start
+    user system
+    group system radio
+    onrestart /system/bin/log -t RIL-ATFWD -p w "ATFWD daemon restarted"
 
 service hdmid /system/bin/hdmid
     class late_start

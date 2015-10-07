@@ -48,7 +48,6 @@
 
 #ifndef	ECRYPTFS_DEK_DEBUG
 #define ECRYPTFS_DEK_DEBUG 0
-#endif
 
 static int
 ecryptfs_decrypt_page_offset(struct ecryptfs_crypt_stat *crypt_stat,
