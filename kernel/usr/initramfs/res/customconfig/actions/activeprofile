@@ -1,0 +1,11 @@
+#!/sbin/busybox sh
+
+if [ "a$2" != "a" ];then
+echo $2 > /data/.imperium/.imperium.profile
+fi
+
+if [ -f /data/.imperium/.imperium.profile ];then
+  cat /data/.imperium/.imperium.profile
+else
+  echo "balanced" > /data/.imperium/.imperium.profile
+fi
