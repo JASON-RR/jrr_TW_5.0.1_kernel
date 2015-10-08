@@ -15,6 +15,9 @@
 #ifdef CONFIG_USB_HOST_NOTIFY
 #include "../../arch/arm/mach-msm/board-8064.h"
 #endif
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#endif
 
 #define ENABLE 1
 #define DISABLE 0
@@ -473,7 +476,11 @@ static void max77693_recovery_work(struct work_struct *work)
 		(chgin_dtls == 0x3) && (chg_dtls != 0x8) && (byp_dtls == 0x0))) {
 		pr_info("%s: try to recovery, cnt(%d)\n", __func__,
 				(chg_data->soft_reg_recovery_cnt + 1));
+#ifdef CONFIG_FORCE_FAST_CHARGE
+		if (screen_on_current_limit && chg_data->siop_level < 100 &&
+#else
 		if (chg_data->siop_level < 100 &&
+#endif
 				chg_data->cable_type == POWER_SUPPLY_TYPE_MAINS) {
 			pr_info("%s : LCD on status and revocer current\n", __func__);
 			max77693_set_input_current(chg_data,
@@ -822,8 +829,11 @@ static int sec_chg_set_property(struct power_supply *psy,
 			else
 				set_charging_current_max =
 					charger->charging_current_max;
-
+#ifdef CONFIG_FORCE_FAST_CHARGE
+			if (screen_on_current_limit && charger->siop_level < 100 &&
+#else
 			if (charger->siop_level < 100 &&
+#endif
 					val->intval == POWER_SUPPLY_TYPE_MAINS) {
 				set_charging_current_max = SIOP_INPUT_LIMIT_CURRENT;
 				if (set_charging_current > SIOP_CHARGING_LIMIT_CURRENT)
@@ -873,14 +883,21 @@ static int sec_chg_set_property(struct power_supply *psy,
 
 			/* do forced set charging current */
 			if (charger->cable_type == POWER_SUPPLY_TYPE_MAINS) {
+#ifdef CONFIG_FORCE_FAST_CHARGE
+				if (screen_on_current_limit && charger->siop_level < 100 )
+#else
 				if (charger->siop_level < 100 )
+#endif
 					set_charging_current_max =
 						SIOP_INPUT_LIMIT_CURRENT;
 				else
 					set_charging_current_max =
 						charger->charging_current_max;
-
+#ifdef CONFIG_FORCE_FAST_CHARGE
+				if (screen_on_current_limit && charger->siop_level < 100 && current_now > SIOP_CHARGING_LIMIT_CURRENT)
+#else
 				if (charger->siop_level < 100 && current_now > SIOP_CHARGING_LIMIT_CURRENT)
+#endif
 					current_now = SIOP_CHARGING_LIMIT_CURRENT;
 				max77693_set_input_current(charger,
 						set_charging_current_max);
@@ -1105,7 +1122,7 @@ static void wpc_detect_work(struct work_struct *work)
 				POWER_SUPPLY_PROP_ONLINE, value);
 		pr_info("%s: wpc activated, set V_INT as PN\n",
 				__func__);
-	} else if (wc_w_state == 0) {
+	} else if ((chg_data->wc_w_state == 1) && (wc_w_state == 0)) {
 		if (!chg_data->is_charging)
 			max77693_set_charger_state(chg_data, true);
 		max77693_read_reg(chg_data->max77693->i2c,
