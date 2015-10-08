@@ -792,10 +792,10 @@ config SEC_TORCH_FLASH
 	bool "torch flash driver"
 	default n
 	help
-	  This driver provides torch flash function.	
+	  This driver provides torch flash function.	  
 
 config CHG_INCOMPATIBLE
-        tristate " support incompatible charger"
+        tristate "support incompatible charger"
         default n
         help
           this option enable support for incompatible charger
@@ -827,6 +827,13 @@ config DESKDOCK_DISABLE
 	default n
 	help
 	  This option enable not support for DESKDOCK
+	  
+config GAMMA_CONTROL
+       bool "Gamma Control for OLED"
+       depends on FB_MSM_MIPI_DSI_SAMSUNG_OCTA
+       default y
+       help
+       This adds full support for shifting RGB panel colors.
 
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
