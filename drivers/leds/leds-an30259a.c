@@ -167,7 +167,7 @@ static struct leds_control {
 	.fade_dt4 = 3,
 };
 
-+extern struct class *sec_class;
+extern struct class *sec_class;
 struct device *led_dev;
 /*path : /sys/class/sec/led/led_pattern*/
 /*path : /sys/class/sec/led/led_blink*/
