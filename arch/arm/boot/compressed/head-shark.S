@@ -18,7 +18,8 @@
 	
 		.section	".start", "ax"
 
-		b	__beginning
+		.arch armv4
+ 		b	__beginning
 	
 __ofw_data:	.long	0				@ the number of memory blocks
 		.space  128				@ (startaddr,size) ...
