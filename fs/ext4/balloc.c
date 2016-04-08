@@ -326,7 +326,7 @@ err_out:
 	return 0;
 }
 /**
- * ext4_read_block_bitmap()
+ * ext4_read_block_bitmap_nowait()
  * @sb:			super block
  * @block_group:	given block group
  *
@@ -422,6 +422,8 @@ ext4_read_block_bitmap(struct super_block *sb, ext4_group_t block_group)
 	struct buffer_head *bh;
 
 	bh = ext4_read_block_bitmap_nowait(sb, block_group);
+	if (!bh)
+		return NULL;
 	if (ext4_wait_block_bitmap(sb, block_group, bh)) {
 		put_bh(bh);
 		return NULL;
@@ -447,7 +449,7 @@ static int ext4_has_free_clusters(struct ext4_sb_info *sbi,
 
 	free_clusters  = percpu_counter_read_positive(fcc);
 	dirty_clusters = percpu_counter_read_positive(dcc);
-	root_clusters = EXT4_B2C(sbi, ext4_r_blocks_count(sbi->s_es));
+	root_clusters = EXT4_B2C(sbi, atomic64_read(&sbi->s_r_blocks_count));
 
 	if (free_clusters - (nclusters + root_clusters + dirty_clusters) <
 					EXT4_FREECLUSTERS_WATERMARK) {
@@ -763,4 +765,3 @@ ext4_fsblk_t ext4_inode_to_goal_block(struct inode *inode)
 		colour = (current->pid % 16) * ((last_block - bg_start) / 16);
 	return bg_start + colour;
 }
-

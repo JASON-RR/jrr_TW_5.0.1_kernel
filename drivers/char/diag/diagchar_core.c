@@ -1,4 +1,4 @@
-/* Copyright (c) 2008-2014, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2008-2015, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -74,10 +74,7 @@ static unsigned int threshold_client_limit = 30;
 /* This is the maximum number of pkt registrations supported at initialization*/
 int diag_max_reg = 600;
 int diag_threshold_reg = 750;
-
-#if defined(CONFIG_SAMSUNG_PRODUCT_SHIP) && defined(CONFIG_DISABLE_DIAG_ON_SHIP_BUILD)
 static int enable_diag;
-#endif
 
 /* Timer variables */
 static struct timer_list drain_timer;
@@ -845,6 +842,7 @@ int diag_switch_logging(unsigned long ioarg)
 				pr_err("socket process, status: %d\n",
 					status);
 			}
+			driver->socket_process = NULL;
 		}
 	} else if (driver->logging_mode == SOCKET_MODE) {
 		driver->socket_process = current;
@@ -2022,7 +2020,6 @@ void diagfwd_bridge_fn(int type)
 inline void diagfwd_bridge_fn(int type) { }
 #endif
 
-#if defined(CONFIG_SAMSUNG_PRODUCT_SHIP) && defined(CONFIG_DISABLE_DIAG_ON_SHIP_BUILD)
 static int check_diagchar_enabled(char *str)
 {
 	get_option(&str, &enable_diag);
@@ -2030,7 +2027,6 @@ static int check_diagchar_enabled(char *str)
 	return 0;
 }
 __setup("diag=", check_diagchar_enabled);
-#endif /* CONFIG_SAMSUNG_PRODUCT_SHIP */
 
 static int __init diagchar_init(void)
 {
@@ -2040,12 +2036,10 @@ static int __init diagchar_init(void)
 	pr_debug("diagfwd initializing ..\n");
 	ret = 0;
 
-#if defined(CONFIG_SAMSUNG_PRODUCT_SHIP) && defined(CONFIG_DISABLE_DIAG_ON_SHIP_BUILD)
 	if (!enable_diag) {
 		pr_info("diagchar_core isn't enabled.\n");
 		return -EPERM;
 	}
-#endif /* CONFIG_SAMSUNG_PRODUCT_SHIP */
 
 	driver = kzalloc(sizeof(struct diagchar_dev) + 5, GFP_KERNEL);
 #ifdef CONFIG_DIAGFWD_BRIDGE_CODE

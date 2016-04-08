@@ -985,6 +985,7 @@ void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
 	pr_warn("acpuclock: user voltage table modified!\n");
 	mutex_unlock(&driver_lock);
 }
+
 #ifdef CONFIG_CPU_FREQ_MSM
 static struct cpufreq_frequency_table freq_table[NR_CPUS][35];
 extern int console_batt_stat;
